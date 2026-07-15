@@ -29,6 +29,7 @@ from PIL import Image
 from safetensors.torch import load_file
 from transformers import AutoModel, CLIPImageProcessor
 
+from ..configs import load_unified_config
 from ..models.sparseviewdit import SparseViewDiTTransformer2DModelNative
 from .convert_checkpoint import convert_sana_ms_to_diffusers
 
@@ -122,25 +123,32 @@ def vae_decode(name, vae, latent):
     return samples
 
 
-_TRANSFORMER_CONFIG = dict(
-    in_channels=32,
-    out_channels=32,
-    num_attention_heads=70,  # 70 * 32 = 2240
-    attention_head_dim=32,
-    num_layers=20,
-    num_cross_attention_heads=20,
-    cross_attention_head_dim=112,  # 20 * 112 = 2240
-    cross_attention_dim=2240,
-    caption_channels=1280,
-    mlp_ratio=2.5,
-    patch_size=1,
-    sample_size=16,  # 16 * 32 = 512
-    camera_emb=True,
-    camera_emb_dim=17,
-    brightness_emb=True,
-    cond_on_rays=True,
-    cond_on_mask=True,
-)
+# Architecture of the released 512px checkpoint, from the unified config
+# (asset_harvester/multiview_diffusion/configs/sparseviewdit_512.yaml).
+_TRANSFORMER_CONFIG = load_unified_config()["model"]
+
+
+def load_transformer_checkpoint(checkpoint_path: str) -> SparseViewDiTTransformer2DModelNative:
+    """Load the transformer from either checkpoint format (fp32, on CPU).
+
+    Accepts the released single-file ``.safetensors`` (converted from the
+    original training layout) or a diffusers-format directory produced by
+    post-training's ``save_pretrained``.
+    """
+    import os
+
+    if os.path.isdir(checkpoint_path):
+        transformer = SparseViewDiTTransformer2DModelNative.from_pretrained(checkpoint_path)
+        print("   Diffusers-format checkpoint loaded")
+        return transformer
+
+    transformer = SparseViewDiTTransformer2DModelNative(**_TRANSFORMER_CONFIG)
+    state_dict = load_file(checkpoint_path, device="cpu")
+    hidden_size = _TRANSFORMER_CONFIG["num_attention_heads"] * _TRANSFORMER_CONFIG["attention_head_dim"]
+    state_dict = convert_sana_ms_to_diffusers(state_dict, hidden_size=hidden_size)
+    missing, unexpected = transformer.load_state_dict(state_dict, strict=False)
+    print(f"   Checkpoint converted and loaded (missing: {len(missing)}, unexpected: {len(unexpected)})")
+    return transformer
 
 
 def get_models(checkpoint_path, device, dtype):
@@ -157,11 +165,7 @@ def get_models(checkpoint_path, device, dtype):
 
     # 3. Load transformer
     print(f"\n Loading transformer from {checkpoint_path}...")
-    transformer = SparseViewDiTTransformer2DModelNative(**_TRANSFORMER_CONFIG)
-    state_dict = load_file(checkpoint_path, device="cpu")
-    state_dict = convert_sana_ms_to_diffusers(state_dict, hidden_size=2240)
-    missing, unexpected = transformer.load_state_dict(state_dict, strict=False)
-    print(f"   Checkpoint converted and loaded (missing: {len(missing)}, unexpected: {len(unexpected)})")
+    transformer = load_transformer_checkpoint(checkpoint_path)
 
     transformer = transformer.to(device).to(dtype)
     transformer.eval()

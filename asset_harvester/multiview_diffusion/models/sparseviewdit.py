@@ -548,6 +548,11 @@ class SparseViewDiTTransformer2DModelNative(SanaTransformer2DModel):
             timestep_scale=timestep_scale,
         )
 
+        # super().__init__ re-registered the ray/mask-widened conv width as
+        # in_channels; restore the logical latent channel count so that
+        # save_pretrained -> from_pretrained does not widen the input twice.
+        self.register_to_config(in_channels=in_channels)
+
         inner_dim = num_attention_heads * attention_head_dim
 
         # Replace transformer_blocks with multiview-aware blocks
