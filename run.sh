@@ -30,7 +30,8 @@ Options:
   --data-root         Input directory with sample_paths.json
                       (default: outputs/ncore_parser/)
   --image-dir         Input directory with frame/mask pairs for direct inference
-  --diffusion-ckpt    Path to multiview diffusion .safetensors checkpoint
+  --diffusion-ckpt    Path to multiview diffusion checkpoint: released
+                      .safetensors file or diffusers-format transformer dir
                       (default: checkpoints/AH_multiview_diffusion.safetensors)
   --ahc-ckpt          Path to AHC .safetensors checkpoint
                       (default: checkpoints/AH_camera_estimator.safetensors)
@@ -96,7 +97,7 @@ done
 
 # --- Validate inputs ---
 
-if [ ! -f "${DIFFUSION_CKPT}" ]; then
+if [ ! -f "${DIFFUSION_CKPT}" ] && [ ! -d "${DIFFUSION_CKPT}" ]; then
     echo "ERROR: diffusion checkpoint not found at ${DIFFUSION_CKPT}"
     exit 1
 fi

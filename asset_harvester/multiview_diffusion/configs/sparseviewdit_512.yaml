@@ -1,0 +1,87 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Unified SparseViewDiT configuration — the source of truth for the released
+# 512px checkpoint (AH_multiview_diffusion.safetensors).
+#
+# - `model`: transformer architecture. Used by inference (model_builder) and by
+#   post-training when starting from the released single-file checkpoint. When
+#   training resumes from a diffusers-format directory, that directory's
+#   config.json takes precedence.
+# - `training`: default post-training hyperparameters. train.py loads these as
+#   argparse defaults; any command-line flag overrides the value here. Pass a
+#   customized copy via `--config /path/to/my.yaml`.
+#
+# Run-specific paths (--data_root, --output_dir, --checkpoint_path, ...) are
+# deliberately not part of this file.
+
+model:
+  in_channels: 32              # DC-AE latent channels (rays/mask widen the input conv internally)
+  out_channels: 32
+  num_attention_heads: 70      # 70 * 32 = 2240 hidden dim
+  attention_head_dim: 32
+  num_layers: 20
+  num_cross_attention_heads: 20
+  cross_attention_head_dim: 112  # 20 * 112 = 2240
+  cross_attention_dim: 2240
+  caption_channels: 1280       # C-RADIO feature dim
+  mlp_ratio: 2.5
+  patch_size: 1
+  sample_size: 16              # 16 * 32 (VAE downsample) = 512 px
+  camera_emb: true
+  camera_emb_dim: 17           # flattened relative c2w (16) + fov (1)
+  brightness_emb: true
+  cond_on_rays: true           # concat 6-ch Plucker rays to the input
+  cond_on_mask: true           # concat 1-ch conditioning mask to the input
+
+training:
+  # Data / preprocessing
+  resolution: 512
+  max_views: 16
+  conditioning_min_n: 0        # 0 supplies unconditional samples for CFG
+  conditioning_max_n: 4
+  symmetry_aug_p: 0.4
+  dataset_repeats: 1
+  dataloader_num_workers: 4
+
+  # Model options
+  gradient_checkpointing: false
+  lora_rank: 0                 # 0 trains all parameters
+  lora_alpha: null             # defaults to lora_rank
+
+  # Flow matching (matches pretraining)
+  num_train_timesteps: 1000
+  flow_shift: 1.0              # 1.0 at 512px; 3-4 at 1024px
+  weighting_scheme: logit_normal
+  logit_mean: 0.0
+  logit_std: 1.0
+  cfg_dropout_prob: 0.1
+
+  # Optimization
+  train_batch_size: 1          # objects (not views) per device
+  max_train_steps: 10000
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0e-5
+  lr_scheduler: constant_with_warmup
+  lr_warmup_steps: 200
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_weight_decay: 0.0
+  adam_epsilon: 1.0e-8
+  use_8bit_adam: false
+  max_grad_norm: 0.1
+  mixed_precision: bf16
+  use_ema: false
+  ema_decay: 0.9999
+
+  # Checkpointing / logging / validation
+  seed: 42
+  checkpointing_steps: 500
+  checkpoints_total_limit: null
+  validation_steps: 250
+  num_validation_samples: 2
+  validation_inference_steps: 30
+  validation_guidance_scale: 2.0
+  report_to: tensorboard
+  tracker_project_name: sparseviewdit-post-training
+  log_interval: 10

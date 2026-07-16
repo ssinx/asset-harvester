@@ -79,13 +79,26 @@ camera-estimator = [
     "safetensors",
     "omegaconf>=2.3.0",
 ]
+# Rectified-flow post-training for the multiview diffusion model.
+# Requires the multiview_diffusion extra as well.
+post_training = [
+    "tensorboard",
+    "wandb==0.17.5",
+    "peft>=0.11.0",
+    "pytest>=7.0",
+]
 
 [project.scripts]
 ncore-parser = "asset_harvester.ncore_parser.__main__:main"
 tokengs-train = "asset_harvester.tokengs.main:main"
+mvdiff-train = "asset_harvester.multiview_diffusion.training.train:main"
+mvdiff-merge-lora = "asset_harvester.multiview_diffusion.training.merge_lora:main"
 
 [tool.setuptools.packages.find]
 include = ["asset_harvester*"]
+
+[tool.setuptools.package-data]
+"asset_harvester.multiview_diffusion.configs" = ["*.yaml"]
 
 [tool.ruff]
 line-length = 120

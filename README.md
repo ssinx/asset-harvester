@@ -171,6 +171,13 @@ For the complete step-by-step pipeline walkthrough — from raw NCore driving lo
 
 </details>
 
+<details>
+<summary><b>Post-Training (Fine-Tuning)</b></summary>
+
+The SparseViewDiT multiview diffusion model can be fine-tuned on your own parsed samples with the same rectified-flow objective it was pretrained with, built on HuggingFace `diffusers` + `accelerate` (full fine-tuning or LoRA, single- or multi-GPU). See the **[Post-Training Guide](docs/post_training.md)**.
+
+</details>
+
 
 <a id="benchmark"></a>
 <details>
