@@ -17,7 +17,6 @@ To address this challenge, we present Asset Harvester, an image-to-3D model and 
 Rather than relying on a single model component, we developed a system-level design for real-world AV data that combines large-scale curation of object-centric training tuples, geometry-aware preprocessing across heterogeneous sensors, and a robust training recipe that couples sparse-view-conditioned multiview generation with 3D Gaussian lifting. Within this system, SparseViewDiT is explicitly designed to address limited-angle views and other real-world data challenges.
 Together with hybrid data curation, augmentation, and self-distillation, this system enables scalable conversion of sparse AV object observations into reusable 3D assets.
 
-
 <p align="center">
   <img src="docs/assets/teaser.gif" alt="Asset Harvester teaser" width="100%" style="border: none;">
 </p>
@@ -252,6 +251,14 @@ asset-harvester/
 ## License
 
 This project is licensed under the Apache License 2.0. See individual file headers for details.
+
+## Support
+
+📣 **Asset Harvester usage questions and discussion**: please post on the [NVIDIA Developer Forum (Omniverse / NuRec)](https://forums.developer.nvidia.com/c/omniverse/platform/nurec/752).
+
+🐛 **Asset Harvester code-level bugs, documentation issues, and feature requests**: file a [GitHub issue](../../issues/new/choose) using the appropriate template (Bug report, Documentation request, or Feature request). The relevant NVIDIA responder is auto-assigned via the `assignees:` field on the template.
+
+🚨 **Security vulnerabilities**: please use [NVIDIA's Vulnerability Disclosure Program](https://app.intigriti.com/programs/nvidia/nvidiavdp/detail). Do not file security issues publicly here.
 
 ## Citation
 
