@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-Apache--2.0-orange)](LICENSE.txt)
 [![Model](https://img.shields.io/badge/HF-Models-yellow?logo=huggingface&style=flat-square)](https://huggingface.co/nvidia/asset-harvester)[![Live Demo!](https://img.shields.io/badge/Live%20Demo!-cd3233?logo=database&logoColor=white&style=flat-square)](https://huggingface.co/spaces/nvidia/asset-harvester)[![NCore Data](https://img.shields.io/badge/NCore-0d9488?logo=database&logoColor=white&style=flat-square)](https://huggingface.co/datasets/nvidia/PhysicalAI-Autonomous-Vehicles-NCore)[![Benchmark](https://img.shields.io/badge/Benchmark-4f46e5?logoColor=white&style=flat-square)](https://huggingface.co/datasets/nvidia/NuRec-AV-Object-Benchmark)
 
-**NVIDIA**
+NVIDIA Asset Harvester is a generative AI model that extracts 3D Gaussian object representations directly from captured driving scenes, even from partial or obstructed views, removing manual asset creation. Each extracted asset feeds into Harmonizer for scene integration, enabling scalable data generation for autonomous vehicle simulation.
 
 
 ### Abstract
