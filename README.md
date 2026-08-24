@@ -49,6 +49,10 @@ NCore V4 Data ─► NCore Parsing ─► Multiview Diffusion + Gaussian Lifting
 
 For end-to-end asset harvesting from recorded driving sessions, see our  <b>[Full End-to-End Workflow](docs/end_to_end_example.md)</b> :sparkles: !
 
+For Waymo Open Dataset TFRecords, including Grounded-SAM2 mask extraction, quality
+filtering, VLM descriptions, and SQLite asset indexing, see the
+[Waymo asset database workflow](docs/waymo_asset_database.md).
+
 <details>
 <summary><b>Setup</b></summary>
 

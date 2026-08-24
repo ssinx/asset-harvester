@@ -90,6 +90,7 @@ post_training = [
 
 [project.scripts]
 ncore-parser = "asset_harvester.ncore_parser.__main__:main"
+waymo-asset-db = "asset_harvester.waymo_asset_database:main"
 tokengs-train = "asset_harvester.tokengs.main:main"
 mvdiff-train = "asset_harvester.multiview_diffusion.training.train:main"
 mvdiff-merge-lora = "asset_harvester.multiview_diffusion.training.merge_lora:main"
